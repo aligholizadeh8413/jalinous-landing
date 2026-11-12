@@ -8,7 +8,7 @@ export function createPines(materials,compact=false) {
   let seed=3187;const random=()=>((seed=(seed*1664525+1013904223)>>>0)/4294967296);
   const wood=new THREE.Group();wood.name='Mature pine branch structure';
   const {beam}=createBuilder(wood),transforms=[];
-  const sites=[[-17,9,18.8,2.9],[-13.8,8.4,20.4,2.8],[-10,10.7,17.1,2.55],[16.9,9.1,20.6,3.1],[13.5,12.2,18.2,2.65],[-23,-13,9,2],[-22,-23,8.4,2],[22,-14,8.8,2],[26,-26,8,2],[-27,20,7,2],[27,18,7.6,2],[-39,-20,8,2]];
+  const sites=[[-17,9,13.5,2.6],[-13.8,8.4,14.1,2.7],[-10,10.7,12.7,2.4],[16.9,9.1,17.1,2.95],[13.5,12.2,15.1,2.7],[-23,-13,9,2],[-22,-23,8.4,2],[22,-14,8.8,2],[26,-26,8,2],[-27,20,7,2],[27,18,7.6,2],[-39,-20,8,2]];
   for(const [index,[x,z,h,r]] of sites.entries()) {
     const distant=index>4,boughs=distant?14:compact?24:34;
     const bendX=(random()-.5)*.8,bendZ=(random()-.5)*.5;
@@ -18,8 +18,8 @@ export function createPines(materials,compact=false) {
       beam([x+bendX*t*t,h*t,z+bendZ*t],[x+bendX*t1*t1,h*t1,z+bendZ*t1],(distant?.19:.22)*(1-t*.88),materials.trunk,(distant?.19:.22)*(1-t1*.88));
     }
     for(let j=0;j<boughs;j++) {
-      const t=.53+(j/boughs)*.43,angle=j*2.399963+random()*.6;
-      const length=r*(.55+random()*.55)*Math.sin((t-.42)*Math.PI/1.05);
+      const t=.69+(j/boughs)*.28,angle=j*2.399963+random()*.6;
+      const length=r*(.62+random()*.43)*Math.sin((t-.52)*Math.PI/.8);
       const start=new THREE.Vector3(x+bendX*t*t,h*t,z+bendZ*t);
       const mid=start.clone().add(new THREE.Vector3(Math.cos(angle)*length*.57,-.15+random()*.3,Math.sin(angle)*length*.57));
       const tip=start.clone().add(new THREE.Vector3(Math.cos(angle)*length,.3+random()*.6,Math.sin(angle)*length));

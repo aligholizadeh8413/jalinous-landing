@@ -28,7 +28,7 @@ try {
   const materials=createMaterials(manager);
   const building=createBuilding(materials);scene.add(building,createSurroundings(materials,compact));
   const rig=createCameraRig(camera,preference.matches);
-  let size=resize(),last=performance.now(),raf=0,visible=true,renderCount=0,previousView='';
+  let size=resize(),last=performance.now(),raf=0,visible=true,previousView='';
   const onResize=()=>{size=resize();previousView='';};
   const onVisibility=()=>{visible=!document.hidden;last=performance.now();};
   window.addEventListener('resize',onResize,{passive:true});
@@ -39,11 +39,10 @@ try {
   function render(now) {
     raf=requestAnimationFrame(render);
     if(!visible)return;
-    const dt=Math.min((now-last)/1000,.05);last=now;
+    const dt=Math.min((now-last)/1000,.25);last=now;
     rig.update(state.progress,dt,size.width,size.height);
     const view=[state.progress.toFixed(4),rig.pose.yaw.toFixed(3),size.width,size.height].join(':');
     if(view!==previousView){renderer.render(scene,camera);previousView=view;}
-    renderCount++;
     // Read-only DOM diagnostics for browser QA. No free-camera controls are exposed.
     {
       const canvas=renderer.domElement;

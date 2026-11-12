@@ -90,7 +90,7 @@ export function createBuilding(m) {
     steppedFlight(high,low,base,mid,3.69,1.12,'Return stair flight');
     for(const z of [4.82,6.38])box(left+.06,mid-.36,z,.18,.45,.18,m.paleStone,'Landing bearing');
     // Deep, unlit stair-well glazing behind the flights.
-    window(-.65,base+2.8,3.58,5.65,1.25,true);
+    if(f===3)window(-.65,base+2.8,3.58,5.65,1.25,true);
     // Continuous solid zigzag parapet, red stone inlay, and slender top rail.
     const path=[[left,mid],[low,mid],[high,top],[right,top]];
     const ribbon=(offset,height,mat,depth,z)=>profile([...path.map(([x,y])=>[x,y+offset+height]),...path.toReversed().map(([x,y])=>[x,y+offset])],z,depth,mat);

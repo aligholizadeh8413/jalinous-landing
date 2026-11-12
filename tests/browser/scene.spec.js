@@ -36,13 +36,21 @@ test('desktop: real WebGL, pointer extremes, scroll approach and reversal',async
   expect(end).not.toEqual(start);expect(errors).toEqual([]);expect(failed).toEqual([]);
   const info=await page.locator('canvas').evaluate(c=>({...c.dataset}));
   fs.writeFileSync(`${output}/desktop-metrics.json`,JSON.stringify({left,right,start,end,info,errors,failed},null,2));
+  if(!baseline){
+    await page.locator('canvas').evaluate(c=>c.getContext('webgl2').getExtension('WEBGL_lose_context').loseContext());
+    await expect(page.locator('#fallback')).toBeVisible();
+    await expect(page.locator('#fallback img')).toBeVisible();
+    await shot(page,'desktop-08-webgl-fallback');
+  }
 });
 test('portrait: touch scroll, hero, mid, final and reduced motion',async({browser})=>{
   const context=await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true,deviceScaleFactor:1});
   const page=await context.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));
   await ready(page);await shot(page,'mobile-01-hero');
   const session=await context.newCDPSession(page);
-  await session.send('Input.synthesizeScrollGesture',{x:190,y:600,yDistance:-450,speed:600,gestureSourceType:'touch'});
+  await session.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:190,y:650,id:1}]});
+  for(let y=620;y>=220;y-=40){await session.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:190,y,id:1}]});await page.waitForTimeout(40);}
+  await session.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
   await page.waitForFunction(()=>Number(document.querySelector('canvas').dataset.progress)>.1,null,{timeout:60000});
   await scrollTo(page,.5);await shot(page,'mobile-02-mid');
   await scrollTo(page,1);await shot(page,'mobile-03-close');

@@ -21,3 +21,14 @@ test('architectural geometry is finite, bounded and includes eight closed steppe
   const env=createSurroundings(m,true);let foliage;env.traverse(o=>{if(o.isInstancedMesh)foliage=o;});
   assert.ok(foliage.count>1000);assert.equal(foliage.material.alphaTest,.35);
 });
+
+test('all runtime material textures are local and use the correct color space',async()=>{
+  const {existsSync,statSync}=await import('node:fs');const m=createMaterials();const files=new Set();
+  for(const material of Object.values(m))for(const slot of ['map','normalMap','roughnessMap']) {
+    const texture=material[slot];if(!texture)continue;
+    const file=new URL(`../public${texture.userData.source}`,import.meta.url);
+    assert.ok(existsSync(file),`missing ${texture.userData.source}`);files.add(file.pathname);
+    assert.equal(texture.colorSpace,slot==='map'?THREE.SRGBColorSpace:THREE.NoColorSpace);
+  }
+  assert.ok([...files].reduce((total,file)=>total+statSync(file).size,0)<1000000,'material texture payload stays below 1 MB');
+});
