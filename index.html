@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#e8ede6" />
+    <meta name="description" content="An architectural perspective on Jalinous Pharmaceutical Co. Explore the building through a quiet, cinematic 3D experience." />
+    <title>Jalinous — A New Perspective</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%232a4139'/%3E%3Ctext x='32' y='46' text-anchor='middle' font-family='serif' font-size='46' fill='%23f0e9d8'%3EJ%3C/text%3E%3C/svg%3E" />
+  </head>
+  <body>
+    <header class="header">
+      <div class="brand" aria-label="Jalinous Pharmaceutical Co."><span class="brand-name">JALINOUS<span class="brand-dot">®</span></span><span class="brand-caption">PHARMACEUTICAL CO.</span></div>
+      <nav aria-label="Section labels, preview only"><ul><li class="nav-current">Home</li><li>Architecture</li><li>About</li></ul></nav>
+      <div class="header-note"><span></span>A new perspective</div>
+    </header>
+    <main id="experience" aria-label="Jalinous architectural experience">
+      <div class="stage">
+        <div id="scene" role="img" aria-label="Interactive three-dimensional reconstruction of the Jalinous building, with cream stone, red-brown columns, and exposed zigzag stairs. Scroll to approach the facade."></div>
+        <div class="scene-shade" aria-hidden="true"></div>
+        <div class="intro-backdrop" aria-hidden="true"></div>
+        <div class="hero-caption"><span class="eyebrow"><i></i> A PLACE. A PERSPECTIVE.</span><h1>Jalinous,<br><span>in a new light.</span></h1><p>An architectural introduction.</p></div>
+        <article class="introduction" aria-labelledby="intro-heading">
+          <div class="intro-rule" aria-hidden="true"></div>
+          <p class="eyebrow" data-copy="eyebrow"></p>
+          <h2 id="intro-heading">A Closer Look<br>at <span>Jalinous.</span></h2>
+          <p class="description" data-copy="description"></p>
+          <div class="intro-foot"><span class="small-line"></span><span>IDENTITY THROUGH ARCHITECTURE</span></div>
+        </article>
+        <div class="bottom-bar"><div class="scene-label"><span class="status-dot"></span><span>JALINOUS · AN ARCHITECTURAL PORTRAIT</span></div><div class="scroll-cue"><span>Scroll to discover</span><span class="scroll-arrow" aria-hidden="true">↓</span></div><div class="chapter"><span id="chapter-number">01</span><span class="chapter-track"><i></i></span><span>02</span></div></div>
+        <div id="loading" role="status"><span class="loading-word">JALINOUS</span><span class="loading-line"></span><span class="loading-caption">Preparing your perspective</span></div>
+        <div id="fallback" hidden><img src="./building-reference.webp" alt="The Jalinous facade, photographed from the entrance courtyard." /><div><p class="eyebrow">JALINOUS PHARMACEUTICAL CO.</p><h2>A Closer Look at Jalinous</h2><p>Discover Jalinous Pharmaceutical Co. through an architectural perspective that brings its identity and environment to life.</p><p class="fallback-note">The interactive view is unavailable in this browser. You can still explore the original building photograph.</p></div></div>
+      </div>
+    </main>
+    <noscript><style>#loading,.hero-caption,.bottom-bar,.introduction{display:none!important}#experience{height:100svh}#fallback{display:flex!important}</style></noscript>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
