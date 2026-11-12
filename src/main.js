@@ -45,13 +45,16 @@ try {
     if(view!==previousView){renderer.render(scene,camera);previousView=view;}
     renderCount++;
     // Read-only DOM diagnostics for browser QA. No free-camera controls are exposed.
-    if(renderCount%30===0) {
+    {
       const canvas=renderer.domElement;
       canvas.dataset.progress=state.progress.toFixed(3);
       canvas.dataset.yaw=rig.pose.yaw.toFixed(2);
       canvas.dataset.drawCalls=String(renderer.info.render.calls);
       canvas.dataset.triangles=String(renderer.info.render.triangles);
       canvas.dataset.camera=rig.pose.position.map(n=>n.toFixed(2)).join(',');
+      canvas.dataset.pointerFine=String(matchMedia('(pointer:fine)').matches);
+      canvas.dataset.renderMs=(performance.now()-now).toFixed(1);
+      canvas.dataset.version='2';
     }
   }
   rig.update(0,0,size.width,size.height);renderer.render(scene,camera);

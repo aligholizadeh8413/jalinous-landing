@@ -6,7 +6,7 @@ export function cameraPose(progress,pointer,aspect,reducedMotion=false) {
   const t=p*p*(3-2*p);
   const portraitFit=Math.max(1,.48/aspect);
   const distance=mobile?mix(84,76,t)*portraitFit:tablet?mix(61,49,t):mix(55,43,t);
-  const yaw=(mobile?10:16)+clamp(pointer,-1,1)*(reducedMotion?0:mix(5,2.2,t));
+  const yaw=(mobile?10:17)+clamp(pointer,-1,1)*(reducedMotion?0:mobile?mix(3,1,t):tablet?mix(9,4,t):mix(14,7,t));
   const radians=yaw*Math.PI/180;
   return {
     position:[Math.sin(radians)*distance,mobile?mix(19,17,t):mix(21.8,16.2,t),Math.cos(radians)*distance],

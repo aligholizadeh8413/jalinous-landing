@@ -3,12 +3,21 @@ on:
   push:
     branches: [feat/high-fidelity-architecture-v2]
   workflow_dispatch:
+    inputs:
+      live_url:
+        description: 'Optional deployed URL to verify'
+        required: false
+        default: ''
 permissions:
   contents: read
 jobs:
   browser:
+    strategy:
+      fail-fast: false
+      matrix:
+        variant: [baseline, candidate]
     runs-on: ubuntu-24.04
-    timeout-minutes: 12
+    timeout-minutes: 16
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -18,12 +27,26 @@ jobs:
       - run: npm ci
       - run: npx playwright install --with-deps chromium
       - run: npm test
+      - uses: actions/checkout@v4
+        if: matrix.variant == 'baseline'
+        with:
+          ref: e1dbaaf80800c3c28395f5d2486a7199ad4c1870
+          path: v1-baseline
+      - name: Prepare unchanged V1 scene with per-frame read-only diagnostics
+        if: matrix.variant == 'baseline'
+        run: |
+          cp -r v1-baseline/src/. src/
+          cp -r v1-baseline/public/. public/
+          sed -i 's/renderCount%30===0/true/' src/main.js
       - run: npm run build
       - run: npx playwright test
+        env:
+          QA_BASELINE: ${{ matrix.variant == 'baseline' && 'true' || '' }}
+          QA_URL: ${{ matrix.variant == 'candidate' && inputs.live_url || '' }}
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: webgl-visual-validation
+          name: webgl-${{ matrix.variant }}
           path: |
             qa/browser/
             test-results/
