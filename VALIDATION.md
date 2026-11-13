@@ -30,7 +30,14 @@ Earlier QA failures were diagnosed and corrected: unsupported Ubuntu runner for 
 
 ## Deployment
 
-The existing Pages workflow is retained. A new `verify-live` job tests the actual deployment URL after the Pages deploy job succeeds and uploads `live-webgl-validation`. Final deployment status will be recorded after that job completes. Public URL remains https://ali-gholizadeh.ir/jalinous-landing/.
+- Deployed commit: `41c1cbdc7686abb2738de1cf9a69369fd9839b7a`, merged through PR #1.
+- Deployment and live verification: https://github.com/aligholizadeh8413/jalinous-landing/actions/runs/43381406464
+- Build, Pages deployment and `verify-live`: all completed successfully.
+- Live Chromium WebGL tests: 2 passed in 4.2 minutes; desktop pointer extremes/scroll/reversal, portrait touch scrolling, reduced motion and forced context-loss fallback were tested against the deployed URL.
+- The live hero screenshot was inspected and shows the V2 three-dimensional scene. The workflow retains `live-webgl-validation` screenshots and metrics for 14 days.
+- Independent HTTP verification: HTML and all 26 checked assets returned 200; the served main bundle includes the V2 marker. No failed asset requests or runtime page exceptions were recorded by the desktop browser test.
+- Verified public URL: https://ali-gholizadeh.ir/jalinous-landing/.
+- No user intervention is required. Physical-device performance verification remains outside the completed software-WebGL test coverage.
 
 ## Limits
 
