@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 import { createBuilder, batchStatic } from './geometry.js';
+import { createPines } from './vegetation.js';
+import { addRoof } from './roof.js';
 
 export function createSurroundings(m, compact=false) {
   const group=new THREE.Group();group.name='Abstract industrial setting and entrance courtyard';
@@ -25,10 +27,19 @@ export function createSurroundings(m, compact=false) {
       }
     }
   }
-  planter(-11.7,10.4,11.7,4.8);planter(14.9,11.4,8.1,5.1);
-  // Slender mature courtyard trees, leaving the staircase and emblem unobscured.
-  tree(-17,9,8.8,1.7);tree(-13.6,9.5,9.9,1.65);tree(-9.5,10.6,8.4,1.6);
-  tree(16.7,10.3,9.8,1.8);tree(13.4,12.3,8.2,1.7);
+  planter(-12.4,10.0,12.0,5.3);planter(15.2,11.3,8.2,5.4);
+  // Photographed covered structure at the left edge, with a low hipped roof,
+  // dark slender columns and mesh-like side screens. No invented signage.
+  const gx=-14.6,gz=5.5;
+  box(gx,.12,gz,5.1,.24,3.9,m.paleStone,'Gazebo raised base');
+  for(const xx of [gx-2.2,gx+2.2])for(const zz of [gz-1.55,gz+1.55])box(xx,1.75,zz,.09,3.3,.09,m.darkMetal);
+  addRoof(group,m,{x:gx,z:gz,w:5.4,d:4.15,y:3.55,rise:.72,inset:1.7});
+  for(const xx of [gx-2.2,gx+2.2])for(let zz=gz-1.55;zz<=gz+1.55;zz+=.24)box(xx,1.5,zz,.035,2.7,.035,m.frame);
+  for(const yy of [.45,2.9])box(gx,yy,gz-1.55,4.4,.045,.05,m.frame);
+  // Adjacent low building fragment is muted; its green wall is in the photo.
+  box(-23,2.4,4,4,4.8,13,m.background);box(-20.96,2.2,4,.04,3.6,11.8,m.backgroundDark);
+  // Entry approach has two distinct level changes and a coping edge.
+  for(let j=0;j<2;j++)box(-18.5,.035+j*.07,14.1-j*.3,5.2,.14,.6+j*.4,m.paleStone);
   // Background masses deliberately suggest scale rather than a claimed digital twin.
   for(const b of [
     [-32,4,-8,19,8,18],[-30,2.9,13,14,5.8,12],[33,4.5,-10,20,9,21],
@@ -41,30 +52,29 @@ export function createSurroundings(m, compact=false) {
     box(x,h*.4,z+d/2+.025,w-.9,.7,.06,m.backgroundDark);
     for(let j=-w/2+1;j<w/2;j+=3)box(x+j,h*.66,z+d/2+.035,1.4,1.15,.05,m.backgroundDark);
   }
-  for(const [x,z] of [[-23,-13],[-22,-23],[22,-14],[26,-26],[-27,20],[27,18],[-39,-20]]) tree(x,z,5.6,1.6,true);
-  // Thin paving joints support perspective without a decorative grid overlay.
-  for(let x=-21;x<=21;x+=3)box(x,-.055,9,.018,.008,24,m.curb);
-  return batchStatic(group);
+  const result=batchStatic(group);result.add(createPines(m,compact));return result;
 
   function planter(x,z,w,d) {
-    box(x,.18,z,w,.36,d,m.redLine);box(x,.39,z,w+.1,.08,d+.1,m.paleStone);
-    box(x,.43,z,w-.35,.03,d-.35,m.grass);
-    const n=compact?16:38;
-    for(let i=0;i<n;i++) {
-      const px=x+(random()-.5)*(w-.6),pz=z+(random()-.5)*(d-.6);
-      mesh(new THREE.IcosahedronGeometry(.12+random()*.18,0),i%3?m.leaf:m.leafLight,px,.55,pz);
+    // Chamfered garden-wall outline follows the photographed low stone beds.
+    const cut=.7,pts=[[-w/2+cut,-d/2],[w/2-cut,-d/2],[w/2,-d/2+cut],[w/2,d/2-cut],[w/2-cut,d/2],[-w/2+cut,d/2],[-w/2,d/2-cut],[-w/2,-d/2+cut]];
+    const shape=new THREE.Shape(pts.map(([px,pz])=>new THREE.Vector2(px,-pz)));
+    const ground=new THREE.ShapeGeometry(shape);ground.rotateX(-Math.PI/2);
+    mesh(ground,m.soil,x,.29,z);
+    for(let i=0;i<pts.length;i++) {
+      const a=pts[i],b=pts[(i+1)%pts.length],length=Math.hypot(b[0]-a[0],b[1]-a[1]);
+      const cx=x+(a[0]+b[0])/2,cz=z+(a[1]+b[1])/2,rotation=-Math.atan2(b[1]-a[1],b[0]-a[0]);
+      const wall=box(cx,.19,cz,length+.05,.38,.24,m.red,'Garden stone wall');wall.rotation.y=rotation;
+      const cap=box(cx,.43,cz,length+.09,.1,.34,m.paleStone,'Garden coping',.018);cap.rotation.y=rotation;
+      const foot=box(cx,.045,cz,length+.05,.09,.3,m.paleStone);foot.rotation.y=rotation;
+      const parts=Math.ceil(length/.64);
+      for(let j=1;j<parts;j++){const t=j/parts;const joint=box(x+a[0]+(b[0]-a[0])*t,.19,z+a[1]+(b[1]-a[1])*t,.012,.34,.245,m.redJoint);joint.rotation.y=rotation;}
     }
-  }
-  function tree(x,z,h,r,background=false) {
-    beam([x,0,z],[x+.13,h*.9,z],background?.13:.115,m.trunk);
-    const n=compact?7:12;
+    // Sparse groundcover tufts and the photographed yellow flower border.
+    const n=compact?100:230;
     for(let i=0;i<n;i++) {
-      const a=i*2.3999, level=.65+random()*.3;
-      const radius=r*(.52+random()*.48);
-      const px=x+Math.cos(a)*radius*.7,pz=z+Math.sin(a)*radius*.7;
-      beam([x,h*level-.7,z],[px,h*level,pz],.035,m.trunk);
-      const crown=mesh(new THREE.IcosahedronGeometry(radius,1),i%3===0?m.leafLight:m.leaf,px,h*level,pz);
-      crown.scale.set(1,.38+random()*.23,1);crown.rotation.set(random(),random(),random());
+      const px=x+(random()-.5)*(w-1.4),pz=z+(random()-.5)*(d-1.3),height=.08+random()*.17;
+      for(let j=0;j<3;j++)beam([px,.3,pz],[px+(random()-.5)*.17,.3+height,pz+(random()-.5)*.17],.012,j%2?m.leaf:m.leafLight,.002);
+      if(i%7===0)mesh(new THREE.SphereGeometry(.042,5,3),m.flower,px,.3+height,pz);
     }
   }
 }
