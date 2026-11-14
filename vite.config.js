@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  base: process.env.GITHUB_ACTIONS ? '/jalinous-landing/' : './',
+  base: process.env.GITHUB_ACTIONS ? `/${(process.env.GITHUB_REPOSITORY || 'aligholizadeh8413/Jalinous').split('/')[1]}/` : './',
   server: { allowedHosts: true },
   build: {
     target: 'es2022',
